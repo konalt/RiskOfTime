@@ -12,6 +12,7 @@ public class PlayerScript : MonoBehaviour
     public float jumpHeight = 8f;
     public float dashDistance = 3f;
     public float dashFriction = -0.1f;
+    public float dashHeight = 0.1f;
     public new Camera camera;
 
     [SerializeField] private float yVelocity = 0f;
@@ -22,8 +23,8 @@ public class PlayerScript : MonoBehaviour
         Left,
         Right
     }
-    private DashState dashState = DashState.None;
-    private float dashVelocity = 0f;
+    [SerializeField] private DashState dashState = DashState.None;
+    [SerializeField] private float dashVelocity = 0f;
 
     void Start()
     {
@@ -35,9 +36,9 @@ public class PlayerScript : MonoBehaviour
         for (int i = 0; i < steps; i++)
         {
             Vector2 steppedVector = vector / steps;
-            bool grounded = Physics2D.OverlapBox((Vector2)groundCheck.position + steppedVector, new Vector2(renderer.bounds.size.x, groundCheckSize / 2), 0, groundMask) != null;
+            bool touch = Physics2D.OverlapBox((Vector2)groundCheck.position + steppedVector, new Vector2(renderer.bounds.size.x, groundCheckSize / 2), 0, groundMask) != null;
             transform.Translate(steppedVector);
-            if (grounded && i != 0) break;
+            if (touch && i != 0) break;
         }
     }
 
@@ -49,17 +50,33 @@ public class PlayerScript : MonoBehaviour
         transform.Translate(Time.deltaTime * horizMove * moveSpeed * Vector2.right);
 
         bool grounded = Physics2D.OverlapBox(groundCheck.position, new Vector2(renderer.bounds.size.x, groundCheckSize / 2), 0, groundMask) != null;
-        yVelocity += gravity;
+        if (!grounded) yVelocity += gravity;
         if (grounded) yVelocity = 0;
         if (Input.GetKeyDown(KeyCode.Space))
         {
             yVelocity = jumpHeight;
         }
-        SteppedTranslate(Time.deltaTime * yVelocity * Vector2.up, 4);
+        if (Input.GetKey(KeyCode.LeftShift) && Input.GetMouseButtonDown(1))
+        {
+            if (Input.GetAxisRaw("Horizontal") < 0)
+            {
+                dashState = DashState.Left;
+                dashVelocity = dashDistance;
+                yVelocity = dashHeight;
+            }
+            else if (Input.GetAxisRaw("Horizontal") > 0)
+            {
+                dashState = DashState.Right;
+                dashVelocity = dashDistance;
+                yVelocity = dashHeight;
+            }
+
+        }
+        SteppedTranslate(Time.deltaTime * yVelocity * Vector2.up, 16);
         if (dashVelocity > 0)
         {
             dashVelocity += dashFriction;
-            if (dashVelocity < 0) {
+            if (dashVelocity <= 0) {
                 dashVelocity = 0;
                 dashState = DashState.None;
             }
@@ -73,19 +90,6 @@ public class PlayerScript : MonoBehaviour
                 SteppedTranslate(Time.deltaTime * dashVelocity * Vector2.left, 4);
                 break;
         }
-        if (Input.GetKey(KeyCode.LeftShift) && Input.GetMouseButtonDown(1))
-        {
-            Debug.Log("DASH  ! !");
-            if (Input.mousePosition.x > Screen.width / 2)
-            {
-                dashState = DashState.Right;
-            } else
-            {
-                dashState = DashState.Left;
-            }
-            dashVelocity = dashDistance;
-        }
-
         camera.transform.position += (transform.position.x - camera.transform.position.x) * Vector3.right; // dumb unity shitt !!!
     }
 }

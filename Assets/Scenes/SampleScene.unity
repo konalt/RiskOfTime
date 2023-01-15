@@ -161,10 +161,12 @@ MonoBehaviour:
   groundCheckSize: 0.1
   moveSpeed: 10
   jumpHeight: 12
-  dashDistance: 100
-  dashFriction: -8
+  dashDistance: 75
+  dashFriction: -5
+  dashHeight: 5
   camera: {fileID: 519420031}
-  yVelocity: 0
+  dashState: 0
+  dashVelocity: 0
 --- !u!212 &329200213
 SpriteRenderer:
   m_ObjectHideFlags: 0
