@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class UtilScript : MonoBehaviour
 {
+    public Camera playerCam;
     void Awake()
     {
         QualitySettings.vSyncCount = 1;

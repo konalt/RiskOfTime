@@ -21,6 +21,11 @@ public class CharacterController2D : MonoBehaviour
     public Transform leftWallCheck;
     public Transform rightWallCheck;
 
+    public bool floor { get; private set; }
+    public bool ceiling { get; private set; }
+    public bool leftWall { get; private set; }
+    public bool rightWall { get; private set; }
+
     private Rigidbody2D rb;
     private new SpriteRenderer renderer;
     private new Camera camera;
@@ -59,10 +64,10 @@ public class CharacterController2D : MonoBehaviour
 
     private void Update()
     {
-        bool floor = CheckBox(floorCheck.position + groundWidth / 4 * Vector3.down, new Vector2(renderer.bounds.size.x * 0.95f, groundWidth / 2));
-        bool ceiling = CheckBox(ceilingCheck.position + groundWidth / 4 * Vector3.up, new Vector2(renderer.bounds.size.x * 0.95f, groundWidth / 2));
-        bool leftWall = CheckBox(leftWallCheck.position + groundWidth / 4 * Vector3.left, new Vector2(groundWidth / 2, renderer.bounds.size.y * 0.95f));
-        bool rightWall = CheckBox(rightWallCheck.position + groundWidth / 4 * Vector3.right, new Vector2(groundWidth / 2, renderer.bounds.size.y * 0.95f));
+        floor = CheckBox(floorCheck.position + groundWidth / 4 * Vector3.down, new Vector2(renderer.bounds.size.x * 0.95f, groundWidth / 2));
+        ceiling = CheckBox(ceilingCheck.position + groundWidth / 4 * Vector3.up, new Vector2(renderer.bounds.size.x * 0.95f, groundWidth / 2));
+        leftWall = CheckBox(leftWallCheck.position + groundWidth / 4 * Vector3.left, new Vector2(groundWidth / 2, renderer.bounds.size.y * 0.95f));
+        rightWall = CheckBox(rightWallCheck.position + groundWidth / 4 * Vector3.right, new Vector2(groundWidth / 2, renderer.bounds.size.y * 0.95f));
 
         float horiz = Input.GetAxisRaw("Horizontal");
 
