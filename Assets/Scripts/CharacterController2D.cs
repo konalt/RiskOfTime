@@ -10,7 +10,9 @@ public class CharacterController2D : MonoBehaviour
     public float dashForce = 2000f;
     public float dashJump = 300f;
     public float jumpForce = 300f;
+    public float jumpHoldFactor = 0.2f;
     public float wallSlideSpeed = 10f;
+    public float wallJumpHorizontalFactor = 3f;
     [Header("Checks")]
     public LayerMask groundMask;
     public float groundWidth = 1f;
@@ -23,12 +25,15 @@ public class CharacterController2D : MonoBehaviour
     private new SpriteRenderer renderer;
     private new Camera camera;
     private Vector3 currentVelocity = Vector3.zero;
+    private bool disableGravityWhenHoldingSpacebar = false;
+    private float grav;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         renderer = GetComponent<SpriteRenderer>();
         camera = Camera.main;
+        grav = rb.gravityScale;
     }
 
     void DrawRect(Rect rect, bool green)
@@ -61,6 +66,19 @@ public class CharacterController2D : MonoBehaviour
 
         float horiz = Input.GetAxisRaw("Horizontal");
 
+        if (disableGravityWhenHoldingSpacebar && Input.GetKey(KeyCode.Space))
+        {
+            rb.gravityScale = 0;
+        } else
+        {
+            rb.gravityScale = grav;
+        }
+        if (Input.GetKeyUp(KeyCode.Space))
+        {
+            disableGravityWhenHoldingSpacebar = false;
+            CancelInvoke(nameof(ReEnableGravityAfterSpacebar));
+        }
+
         Vector2 move = Vector3.SmoothDamp(rb.velocity, new Vector2(horiz * 10f, rb.velocity.y), ref currentVelocity, moveSmoothing);
 
         rb.velocity = move;
@@ -75,11 +93,24 @@ public class CharacterController2D : MonoBehaviour
         {
             rb.AddForce(new Vector2(dashForce * Input.GetAxisRaw("Horizontal"), dashJump));
         }
-        if (Input.GetKeyDown(KeyCode.Space) && floor)
+        if (Input.GetKeyDown(KeyCode.Space))
         {
-            rb.velocity = new Vector2(rb.velocity.x, 0);
-            rb.AddForce(jumpForce * Vector2.up);
+            if (floor ||
+                leftWall ||
+                rightWall)
+            {
+                disableGravityWhenHoldingSpacebar = true;
+                Invoke(nameof(ReEnableGravityAfterSpacebar), jumpHoldFactor);
+                rb.velocity = new Vector2(rb.velocity.x, 0);
+                rb.AddForce(jumpForce * Vector2.up + 
+                    ((leftWall || rightWall) ? jumpForce * wallJumpHorizontalFactor : 0) * Vector2.right);
+            }
         }
+    }
+
+    void ReEnableGravityAfterSpacebar()
+    {
+        disableGravityWhenHoldingSpacebar = false;
     }
 
     private void LateUpdate()

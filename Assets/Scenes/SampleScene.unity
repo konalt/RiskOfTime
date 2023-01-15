@@ -323,11 +323,13 @@ MonoBehaviour:
   dashForce: 2000
   dashJump: 300
   jumpForce: 500
+  jumpHoldFactor: 0.15
   wallSlideSpeed: 3
+  wallJumpHorizontalFactor: 1.5
   groundMask:
     serializedVersion: 2
     m_Bits: 439
-  groundWidth: 0.2
+  groundWidth: 1
   floorCheck: {fileID: 398806165}
   ceilingCheck: {fileID: 33555674}
   leftWallCheck: {fileID: 733760094}
