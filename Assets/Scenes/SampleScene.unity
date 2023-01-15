@@ -161,6 +161,8 @@ MonoBehaviour:
   groundCheckSize: 0.1
   moveSpeed: 10
   jumpHeight: 12
+  dashDistance: 100
+  dashFriction: -8
   camera: {fileID: 519420031}
   yVelocity: 0
 --- !u!212 &329200213

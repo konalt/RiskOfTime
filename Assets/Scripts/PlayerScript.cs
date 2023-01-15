@@ -10,10 +10,20 @@ public class PlayerScript : MonoBehaviour
     public float groundCheckSize = 0.01f;
     public float moveSpeed = 10f;
     public float jumpHeight = 8f;
+    public float dashDistance = 3f;
+    public float dashFriction = -0.1f;
     public new Camera camera;
 
     [SerializeField] private float yVelocity = 0f;
     private new SpriteRenderer renderer;
+    enum DashState
+    {
+        None,
+        Left,
+        Right
+    }
+    private DashState dashState = DashState.None;
+    private float dashVelocity = 0f;
 
     void Start()
     {
@@ -46,6 +56,35 @@ public class PlayerScript : MonoBehaviour
             yVelocity = jumpHeight;
         }
         SteppedTranslate(Time.deltaTime * yVelocity * Vector2.up, 4);
+        if (dashVelocity > 0)
+        {
+            dashVelocity += dashFriction;
+            if (dashVelocity < 0) {
+                dashVelocity = 0;
+                dashState = DashState.None;
+            }
+        }
+        switch (dashState)
+        {
+            case DashState.Right:
+                SteppedTranslate(Time.deltaTime * dashVelocity * Vector2.right, 4);
+                break;
+            case DashState.Left:
+                SteppedTranslate(Time.deltaTime * dashVelocity * Vector2.left, 4);
+                break;
+        }
+        if (Input.GetKey(KeyCode.LeftShift) && Input.GetMouseButtonDown(1))
+        {
+            Debug.Log("DASH  ! !");
+            if (Input.mousePosition.x > Screen.width / 2)
+            {
+                dashState = DashState.Right;
+            } else
+            {
+                dashState = DashState.Left;
+            }
+            dashVelocity = dashDistance;
+        }
 
         camera.transform.position += (transform.position.x - camera.transform.position.x) * Vector3.right; // dumb unity shitt !!!
     }
