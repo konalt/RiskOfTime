@@ -158,9 +158,11 @@ MonoBehaviour:
   groundMask:
     serializedVersion: 2
     m_Bits: 128
-  groundCheckSize: 0.01
+  groundCheckSize: 0.1
   moveSpeed: 10
+  jumpHeight: 12
   camera: {fileID: 519420031}
+  yVelocity: 0
 --- !u!212 &329200213
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -220,8 +222,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 329200211}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -7.4, y: 1.86, z: 0}
-  m_LocalScale: {x: 1, y: 3.13097, z: 1}
+  m_LocalPosition: {x: -8.91, y: 1, z: 0}
+  m_LocalScale: {x: 1.4378, y: 3.13097, z: 1}
   m_Children:
   - {fileID: 398806165}
   m_Father: {fileID: 0}
@@ -360,7 +362,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 398806164}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.500003, z: 0}
+  m_LocalPosition: {x: 0, y: -0.498, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 329200214}
