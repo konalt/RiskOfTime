@@ -20,6 +20,10 @@ public class CharacterController2D : MonoBehaviour
     public Transform ceilingCheck;
     public Transform leftWallCheck;
     public Transform rightWallCheck;
+    [Header("Weaponry")]
+    public GameObject bullet;
+    public float bulletSpeed;
+    public float bulletOffset;
 
     public bool floor { get; private set; }
     public bool ceiling { get; private set; }
@@ -111,6 +115,24 @@ public class CharacterController2D : MonoBehaviour
                     ((leftWall || rightWall) ? jumpForce * wallJumpHorizontalFactor : 0) * Vector2.right);
             }
         }
+        if (Input.GetMouseButtonDown(0))
+        {
+            Shoot(Input.mousePosition);
+        }
+    }
+
+    void Shoot(Vector2 mousePos)
+    {
+        GameObject bulObject = Instantiate(bullet);
+        Bullet bulControl = bulObject.AddComponent<Bullet>();
+        bulControl.transform.position = transform.position;
+        bulControl.SetVector(Camera.main.WorldToScreenPoint(transform.position), mousePos, bulletOffset);
+        bulControl.SetSpeed(bulletSpeed);
+        bulControl.transform.eulerAngles = new Vector3(
+            bulControl.transform.eulerAngles.x,
+            bulControl.transform.eulerAngles.y,
+            bulControl.GetAngleArbitrary(Camera.main.WorldToScreenPoint(transform.position), mousePos)
+        );
     }
 
     void ReEnableGravityAfterSpacebar()
