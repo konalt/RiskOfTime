@@ -117,7 +117,9 @@ public class CharacterController2D : MonoBehaviour
         }
         if (Input.GetMouseButtonDown(0))
         {
-            Shoot(Input.mousePosition);
+            Vector2 mp = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            mp.y = transform.position.y;
+            Shoot(Camera.main.WorldToScreenPoint(mp));
         }
     }
 
@@ -143,5 +145,6 @@ public class CharacterController2D : MonoBehaviour
     private void LateUpdate()
     {
         camera.transform.position += (transform.position.x - camera.transform.position.x) * Vector3.right; // dumb unity shitt !!!
+        camera.transform.position += (transform.position.y - camera.transform.position.y) * Vector3.up; // dumb unity shitt !!!
     }
 }
