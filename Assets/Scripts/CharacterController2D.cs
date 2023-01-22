@@ -36,11 +36,13 @@ public class CharacterController2D : MonoBehaviour
     private Vector3 currentVelocity = Vector3.zero;
     private bool disableGravityWhenHoldingSpacebar = false;
     private float grav;
+    private new AnimationComponent animation;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         renderer = GetComponent<SpriteRenderer>();
+        animation = GetComponent<AnimationComponent>();
         camera = Camera.main;
         grav = rb.gravityScale;
     }
@@ -120,6 +122,15 @@ public class CharacterController2D : MonoBehaviour
             Vector2 mp = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             mp.y = transform.position.y;
             Shoot(Camera.main.WorldToScreenPoint(mp));
+            animation.StartAnimation("shoot", false);
+        }
+        if (Input.mousePosition.x > Screen.width / 2 && !renderer.flipX)
+        {
+            renderer.flipX = true;
+        }
+        if (Input.mousePosition.x < Screen.width / 2 && renderer.flipX)
+        {
+            renderer.flipX = false;
         }
     }
 
