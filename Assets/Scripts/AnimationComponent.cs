@@ -12,7 +12,7 @@ public class AnimationComponent : MonoBehaviour
     public List<AnimationData> animations;
 
     private AnimationData currentAnimation;
-    private int currentFrame = 0;
+    private int currentFrame = -1;
     private new SpriteRenderer renderer;
     private bool isLooping = false;
 
@@ -32,7 +32,7 @@ public class AnimationComponent : MonoBehaviour
     {
         isLooping = inf;
         CancelInvoke(nameof(NextFrame));
-        currentFrame = 0;
+        currentFrame = -1;
         currentAnimation = animations.Find((anim) => anim.name == name);
         InvokeRepeating(nameof(NextFrame), 0f, 1f / FPS);
     }
@@ -48,6 +48,7 @@ public class AnimationComponent : MonoBehaviour
             } else
             {
                 StartAnimation("__idle");
+                return;
             }
         }
         renderer.sprite = currentAnimation.frames[currentFrame];
