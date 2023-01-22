@@ -11,7 +11,7 @@ public class AnimationComponent : MonoBehaviour
     public List<Sprite> idleAnimationFrames;
     public List<AnimationData> animations;
 
-    private AnimationData currentAnimation;
+    public AnimationData currentAnimation;
     private int currentFrame = -1;
     private new SpriteRenderer renderer;
     private bool isLooping = false;

@@ -97,7 +97,15 @@ public class CharacterController2D : MonoBehaviour
         if (horiz < 0 && !floor && leftWall ||
             horiz > 0 && !floor && rightWall)
         {
+            renderer.flipX = leftWall;
             rb.velocity = new Vector2(rb.velocity.x, -wallSlideSpeed);
+            if (animation.currentAnimation.name != "wallslide")
+            {
+                animation.StartAnimation("wallslide");
+            }
+        } else if (animation.currentAnimation.name == "wallslide")
+        {
+            animation.StartAnimation("__idle");
         }
 
         if (Input.GetKey(KeyCode.LeftShift) && Input.GetMouseButtonDown(1))
@@ -124,13 +132,17 @@ public class CharacterController2D : MonoBehaviour
             Shoot(Camera.main.WorldToScreenPoint(mp));
             animation.StartAnimation("shoot", false);
         }
-        if (Input.mousePosition.x > Screen.width / 2 && !renderer.flipX)
+        if (!(horiz < 0 && !floor && leftWall ||
+            horiz > 0 && !floor && rightWall))
         {
-            renderer.flipX = true;
-        }
-        if (Input.mousePosition.x < Screen.width / 2 && renderer.flipX)
-        {
-            renderer.flipX = false;
+            if (Input.mousePosition.x > Screen.width / 2 && !renderer.flipX)
+            {
+                renderer.flipX = true;
+            }
+            if (Input.mousePosition.x < Screen.width / 2 && renderer.flipX)
+            {
+                renderer.flipX = false;
+            }
         }
     }
 
