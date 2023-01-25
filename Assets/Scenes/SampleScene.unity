@@ -280,7 +280,10 @@ MonoBehaviour:
   idleAnimationFrames:
   - {fileID: 21300000, guid: a7231aff7bdb94643900264aa58ee206, type: 3}
   animations:
-  - name: shoot
+  - name: idlePistol
+    frames:
+    - {fileID: 21300000, guid: a7231aff7bdb94643900264aa58ee206, type: 3}
+  - name: shootPistol
     frames:
     - {fileID: 21300000, guid: 64e7306540070c64697c0e22dca28bad, type: 3}
     - {fileID: 21300000, guid: 7493571ae25a6954595b62cd5c214fde, type: 3}

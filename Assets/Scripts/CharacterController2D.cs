@@ -30,6 +30,13 @@ public class CharacterController2D : MonoBehaviour
     public bool leftWall { get; private set; }
     public bool rightWall { get; private set; }
 
+    enum Weapon
+    {
+        Pistol,
+        Railgun
+    }
+    private Weapon weapon = Weapon.Pistol;
+
     private Rigidbody2D rb;
     private new SpriteRenderer renderer;
     private new Camera camera;
@@ -45,6 +52,8 @@ public class CharacterController2D : MonoBehaviour
         animation = GetComponent<AnimationComponent>();
         camera = Camera.main;
         grav = rb.gravityScale;
+
+        animation.StartAnimation("idle" + weapon.ToString());
     }
 
     void DrawRect(Rect rect, bool green)
@@ -105,7 +114,7 @@ public class CharacterController2D : MonoBehaviour
             }
         } else if (animation.currentAnimation.name == "wallslide")
         {
-            animation.StartAnimation("__idle");
+            animation.StartAnimation("idle" + weapon.ToString());
         }
 
         if (Input.GetKey(KeyCode.LeftShift) && Input.GetMouseButtonDown(1))
@@ -130,7 +139,7 @@ public class CharacterController2D : MonoBehaviour
             Vector2 mp = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             mp.y = transform.position.y;
             Shoot(Camera.main.WorldToScreenPoint(mp));
-            animation.StartAnimation("shoot", false);
+            animation.StartAnimation("shoot" + weapon.ToString(), false);
         }
         if (!(horiz < 0 && !floor && leftWall ||
             horiz > 0 && !floor && rightWall))
