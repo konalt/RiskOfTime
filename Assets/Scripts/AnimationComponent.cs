@@ -10,6 +10,7 @@ public class AnimationComponent : MonoBehaviour
     public int FPS = 24;
     public List<Sprite> idleAnimationFrames;
     public List<AnimationData> animations;
+    public string overrideIdleName = "";
 
     public AnimationData currentAnimation;
     private int currentFrame = -1;
@@ -18,6 +19,7 @@ public class AnimationComponent : MonoBehaviour
 
     private void Start()
     {
+        if (overrideIdleName == "") overrideIdleName = "__idle";
         renderer = GetComponent<SpriteRenderer>();
         AnimationData idle = new AnimationData
         {
@@ -25,7 +27,7 @@ public class AnimationComponent : MonoBehaviour
             frames = idleAnimationFrames
         };
         animations.Add(idle);
-        StartAnimation("__idle");
+        StartAnimation(overrideIdleName);
     }
 
     public void StartAnimation(string name, bool inf = true)
@@ -47,7 +49,7 @@ public class AnimationComponent : MonoBehaviour
                 currentFrame = 0;
             } else
             {
-                StartAnimation("__idle");
+                StartAnimation(overrideIdleName);
                 return;
             }
         }

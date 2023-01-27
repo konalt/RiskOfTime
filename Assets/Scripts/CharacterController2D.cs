@@ -1,6 +1,36 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
+public static class Extension
+{
+    public static T Next<T>(this T src) where T : struct
+    {
+        if (!typeof(T).IsEnum)
+            throw new ArgumentException(string.Format("Argument {0} is not an Enum",
+                                                       typeof(T).FullName));
+
+        T[] Arr = (T[])Enum.GetValues(src.GetType());
+
+        int j = (Array.IndexOf<T>(Arr, src) + 1) % Arr.Length; // <- Modulo % Arr.Length added
+
+        return Arr[j];
+    }
+
+    public static T Prev<T>(this T src) where T : struct
+    {
+        if (!typeof(T).IsEnum)
+            throw new ArgumentException(string.Format("Argument {0} is not an Enum",
+                                                       typeof(T).FullName));
+
+        T[] Arr = (T[])Enum.GetValues(src.GetType());
+
+        int j = (Array.IndexOf(Arr, src) - 1) % Arr.Length; // <- Modulo % Arr.Length added
+
+        return Arr[j];
+    }
+}
 
 public class CharacterController2D : MonoBehaviour
 {
@@ -35,7 +65,7 @@ public class CharacterController2D : MonoBehaviour
         Pistol,
         Railgun
     }
-    private Weapon weapon = Weapon.Pistol;
+    private Weapon weapon = Weapon.Railgun;
 
     private Rigidbody2D rb;
     private new SpriteRenderer renderer;
@@ -53,6 +83,7 @@ public class CharacterController2D : MonoBehaviour
         camera = Camera.main;
         grav = rb.gravityScale;
 
+        animation.overrideIdleName = "idle" + weapon.ToString();
         animation.StartAnimation("idle" + weapon.ToString());
     }
 
@@ -77,6 +108,16 @@ public class CharacterController2D : MonoBehaviour
         return detect;
     }
 
+    int GetFireDelay(Weapon wep)
+    {
+        return wep switch
+        {
+            Weapon.Pistol => 0,
+            Weapon.Railgun => 833,
+            _ => 0,
+        };
+    }
+
     private void Update()
     {
         floor = CheckBox(floorCheck.position + groundWidth / 4 * Vector3.down, new Vector2(renderer.bounds.size.x * 0.95f, groundWidth / 2));
@@ -85,6 +126,19 @@ public class CharacterController2D : MonoBehaviour
         rightWall = CheckBox(rightWallCheck.position + groundWidth / 4 * Vector3.right, new Vector2(groundWidth / 2, renderer.bounds.size.y * 0.95f));
 
         float horiz = Input.GetAxisRaw("Horizontal");
+
+        Debug.Log(weapon);
+        Debug.Log(Input.mouseScrollDelta);
+
+        if (Input.mouseScrollDelta.y > 0)
+        {
+            weapon = Extension.Next(weapon);
+        }
+
+        if (Input.mouseScrollDelta.y < 0)
+        {
+            weapon = Extension.Prev(weapon);
+        }
 
         if (disableGravityWhenHoldingSpacebar && Input.GetKey(KeyCode.Space))
         {
@@ -138,7 +192,7 @@ public class CharacterController2D : MonoBehaviour
         {
             Vector2 mp = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             mp.y = transform.position.y;
-            Shoot(Camera.main.WorldToScreenPoint(mp));
+            StartCoroutine(Shoot(Camera.main.WorldToScreenPoint(mp), GetFireDelay(weapon) / 1000f));
             animation.StartAnimation("shoot" + weapon.ToString(), false);
         }
         if (!(horiz < 0 && !floor && leftWall ||
@@ -155,17 +209,19 @@ public class CharacterController2D : MonoBehaviour
         }
     }
 
-    void Shoot(Vector2 mousePos)
+    IEnumerator Shoot(Vector2 mp, float delay)
     {
+        yield return new WaitForSeconds(delay);
+        Debug.Log(mp);
         GameObject bulObject = Instantiate(bullet);
         Bullet bulControl = bulObject.AddComponent<Bullet>();
         bulControl.transform.position = transform.position;
-        bulControl.SetVector(Camera.main.WorldToScreenPoint(transform.position), mousePos, bulletOffset);
+        bulControl.SetVector(Camera.main.WorldToScreenPoint(transform.position), mp, bulletOffset);
         bulControl.SetSpeed(bulletSpeed);
         bulControl.transform.eulerAngles = new Vector3(
             bulControl.transform.eulerAngles.x,
             bulControl.transform.eulerAngles.y,
-            bulControl.GetAngleArbitrary(Camera.main.WorldToScreenPoint(transform.position), mousePos)
+            bulControl.GetAngleArbitrary(Camera.main.WorldToScreenPoint(transform.position), mp)
         );
     }
 
