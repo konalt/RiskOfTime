@@ -127,9 +127,6 @@ public class CharacterController2D : MonoBehaviour
 
         float horiz = Input.GetAxisRaw("Horizontal");
 
-        Debug.Log(weapon);
-        Debug.Log(Input.mouseScrollDelta);
-
         if (Input.mouseScrollDelta.y > 0)
         {
             weapon = Extension.Next(weapon);
